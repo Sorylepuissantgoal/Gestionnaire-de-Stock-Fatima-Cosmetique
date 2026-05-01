@@ -1,0 +1,263 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background: #f4f6f8;
+  color: #222;
+}
+
+/* NAVBAR */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1e40af;
+  color: white;
+  padding: 15px 30px;
+}
+
+.navbar button {
+  background: white;
+  color: #1e40af;
+  border: none;
+  padding: 8px 12px;
+  margin-left: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* PAGES */
+.page {
+  display: none;
+  padding: 20px;
+}
+
+.page.active {
+  display: block;
+}
+
+/* HERO */
+.hero {
+  background: #1e40af;
+  color: white;
+  padding: 40px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* TITRES */
+.titre-section {
+  margin: 20px 0;
+}
+
+/* PRODUITS GRID (boutique) */
+.produits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.carte-produit {
+  background: white;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+  transition: transform 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+
+.carte-produit:hover {
+  transform: scale(1.03);
+}
+
+.carte-produit img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.carte-produit h3 {
+  font-size: 16px;
+  margin: 10px 0 5px;
+}
+
+.carte-produit p {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 4px;
+}
+
+.btn-acheter {
+  margin-top: auto;
+  padding: 10px;
+  background: #16a34a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-acheter:hover {
+  background: #15803d;
+}
+
+
+.carte-produit img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.carte-produit h3 {
+  margin: 10px 0;
+}
+
+.carte-produit p {
+  margin-bottom: 6px;
+}
+
+.btn-acheter {
+  width: 100%;
+  padding: 10px;
+  background: #16a34a;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-acheter:hover {
+  background: #15803d;
+}
+
+/* ADMIN */
+.admin-layout {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.admin-box {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.admin-box input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 10px;
+  background: #1e40af;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* STATS */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.stat-card.alert {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* LISTES ADMIN */
+.produit-admin {
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
+}
+
+.btn-small {
+  padding: 5px 8px;
+  margin-right: 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-vendre {
+  background: #16a34a;
+  color: white;
+}
+
+.btn-delete {
+  background: #dc2626;
+  color: white;
+}
+
+/* ALERTES */
+.alert-item {
+  background: #fee2e2;
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  color: #991b1b;
+}
+.login-box {
+  max-width: 400px;
+  margin: 60px auto;
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.login-box h2 {
+  margin-bottom: 20px;
+  text-align: center;
+  color: #1e40af;
+}
+
+.message-erreur {
+  color: #dc2626;
+  text-align: center;
+  margin-top: 10px;
+}
+.produit-admin {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
+}
+
+.produit-info {
+  flex: 1;
+}
+
+.produit-admin img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 10px;
+}
