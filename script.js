@@ -356,3 +356,14 @@ function resetVentes() {
     afficherStats();
   }
 }
+
+function resetVentes() {
+  let confirmation = confirm("Remettre le total ventes à zéro ?");
+
+  if (confirmation) {
+    ventesRetirees = ventes.reduce((total, v) => total + v.prix, 0);
+    localStorage.setItem("ventesRetirees", ventesRetirees);
+
+    afficherStats();
+  }
+}
