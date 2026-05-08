@@ -6,6 +6,7 @@ const ADMIN_PASSWORD = "Mouctar";
 let produits = JSON.parse(localStorage.getItem("produits")) || [];
 let ventes = JSON.parse(localStorage.getItem("ventes")) || [];
 let beneficeRetire = Number(localStorage.getItem("beneficeRetire")) || 0;
+let ventesRetirees = Number(localStorage.getItem("ventesRetirees")) || 0;
 
 function sauvegarder() {
   localStorage.setItem("produits", JSON.stringify(produits));
@@ -264,7 +265,8 @@ function afficherAlertes() {
 function afficherStats() {
   let totalProduits = produits.length;
   let valeurStock = produits.reduce((total, p) => total + p.stock * p.prix, 0);
-  let totalVentes = ventes.reduce((total, v) => total + v.prix, 0);
+  let totalVentesBrut = ventes.reduce((total, v) => total + v.prix, 0);
+  let totalVentes = totalVentesBrut - ventesRetirees;
   let totalAlertes = produits.filter(p => p.stock <= p.seuil).length;
   let beneficeTotalBrut = ventes.reduce((total, v) => total + (v.benefice || 0), 0);
   let beneficeTotal = beneficeTotalBrut - beneficeRetire;
@@ -328,4 +330,29 @@ function resetBenefice() {
 
         afficherStats();
     }
+}
+
+function retirerVentes() {
+  let montant = Number(prompt("Montant à retirer des ventes :"));
+
+  if (!montant || montant <= 0) {
+    alert("Montant invalide");
+    return;
+  }
+
+  ventesRetirees += montant;
+  localStorage.setItem("ventesRetirees", ventesRetirees);
+
+  afficherStats();
+}
+
+function resetVentes() {
+  let confirmation = confirm("Remettre le total ventes à zéro ?");
+
+  if (confirmation) {
+    ventesRetirees = ventes.reduce((total, v) => total + v.prix, 0);
+    localStorage.setItem("ventesRetirees", ventesRetirees);
+
+    afficherStats();
+  }
 }
