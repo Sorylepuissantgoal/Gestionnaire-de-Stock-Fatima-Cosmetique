@@ -262,6 +262,22 @@ body {
   border-radius: 10px;
 }
 
+.login-box input {
+  width: 100%;
+  display: block;
+  padding: 12px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+.login-box .btn-primary {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+}
+
 /* RESPONSIVE MOBILE */
 @media (max-width: 768px) {
   .navbar {
