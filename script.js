@@ -1,3 +1,18 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAgdjI0_0mmSfKXAS0PtJI9CTRko777qTw",
+  authDomain: "gestionnaire-de-stock-fatima.firebaseapp.com",
+  projectId: "gestionnaire-de-stock-fatima",
+  storageBucket: "gestionnaire-de-stock-fatima.firebasestorage.app",
+  messagingSenderId: "707260453829",
+  appId: "1:707260453829:web:233c7d79471252b68cf1ac"
+};
+
+const app = initializeApp(firebaseConfig);
+
+console.log("Firebase connecté");
+
 let adminConnecte = false;
 
 const ADMIN_USERNAME = "Sarifou";
