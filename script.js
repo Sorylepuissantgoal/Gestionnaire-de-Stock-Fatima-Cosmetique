@@ -29,15 +29,29 @@ let adminConnecte = false;
 const ADMIN_USERNAME = "Sarifou";
 const ADMIN_PASSWORD = "Mouctar";
 
-let produits = JSON.parse(localStorage.getItem("produits")) || [];
+let produits = [];
 let ventes = JSON.parse(localStorage.getItem("ventes")) || [];
 let beneficeRetire = Number(localStorage.getItem("beneficeRetire")) || 0;
 let ventesRetirees = Number(localStorage.getItem("ventesRetirees")) || 0;
 
-function sauvegarder() {
-  localStorage.setItem("produits", JSON.stringify(produits));
-  localStorage.setItem("ventes", JSON.stringify(ventes));
-}
+console.log("Firebase connecté");
+
+onSnapshot(collection(db, "produits"), (snapshot) => {
+  produits = [];
+
+  snapshot.forEach((docItem) => {
+    produits.push({
+      firestoreId: docItem.id,
+      ...docItem.data()
+    });
+  });
+
+  afficherBoutique();
+  afficherAdmin();
+  afficherAlertes();
+  afficherStats();
+});
+
 
 function afficherPage(pageId) {
   document.querySelectorAll(".page").forEach(page => {
