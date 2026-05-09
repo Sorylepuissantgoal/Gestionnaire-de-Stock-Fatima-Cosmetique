@@ -371,3 +371,15 @@ function resetVentes() {
     afficherStats();
   }
 }
+
+window.afficherPage = afficherPage;
+window.ouvrirConnexionAdmin = ouvrirConnexionAdmin;
+window.connecterAdmin = connecterAdmin;
+window.ajouterProduit = ajouterProduit;
+window.vendreProduit = vendreProduit;
+window.ajouterStock = ajouterStock;
+window.supprimerProduit = supprimerProduit;
+window.retirerBenefice = retirerBenefice;
+window.resetBenefice = resetBenefice;
+window.retirerVentes = retirerVentes;
+window.resetVentes = resetVentes;
