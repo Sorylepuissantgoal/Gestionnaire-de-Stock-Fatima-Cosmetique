@@ -99,8 +99,7 @@ function ajouterProduit() {
       photo: reader.result || ""
     };
 
-    produits.push(nouveauProduit);
-    sauvegarder();
+    addDoc(collection(db, "produits"), nouveauProduit);
 
     document.getElementById("nomProduit").value = "";
     document.getElementById("categorieProduit").value = "";
