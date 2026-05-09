@@ -1,5 +1,15 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  onSnapshot,
+  doc,
+  updateDoc,
+  deleteDoc
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyAgdjI0_0mmSfKXAS0PtJI9CTRko777qTw",
   authDomain: "gestionnaire-de-stock-fatima.firebaseapp.com",
@@ -10,6 +20,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 console.log("Firebase connecté");
 
