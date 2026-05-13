@@ -78,49 +78,35 @@ function ajouterProduit() {
   let prix = Number(document.getElementById("prixProduit").value);
   let prixAchat = Number(document.getElementById("prixAchatProduit").value);
   let seuil = Number(document.getElementById("seuilProduit").value);
-  let photoInput = document.getElementById("photoProduit");
+  let photo = document.getElementById("photoProduit").value.trim();
 
   if (nom === "" || stock <= 0 || prix <= 0) {
     alert("Remplis le nom, le stock et le prix.");
     return;
   }
 
-  let reader = new FileReader();
-
-  reader.onload = function () {
-    let nouveauProduit = {
-      id: Date.now(),
-      nom: nom,
-      categorie: categorie || "Autre",
-      stock: stock,
-      prixAchat: prixAchat,
-      prix: prix,
-      seuil: seuil || 5,
-      photo: reader.result || ""
-    };
-
-    addDoc(collection(db, "produits"), nouveauProduit);
-
-    document.getElementById("nomProduit").value = "";
-    document.getElementById("categorieProduit").value = "";
-    document.getElementById("stockProduit").value = "";
-    document.getElementById("prixProduit").value = "";
-    document.getElementById("seuilProduit").value = "";
-    document.getElementById("photoProduit").value = "";
-
-    afficherBoutique();
-    afficherAdmin();
-    afficherAlertes();
-    afficherStats();
-
-    alert("Produit ajouté avec succès.");
+  let nouveauProduit = {
+    id: Date.now(),
+    nom: nom,
+    categorie: categorie || "Autre",
+    stock: stock,
+    prixAchat: prixAchat,
+    prix: prix,
+    seuil: seuil || 5,
+    photo: photo
   };
 
-  if (photoInput.files && photoInput.files[0]) {
-    reader.readAsDataURL(photoInput.files[0]);
-  } else {
-    reader.onload();
-  }
+  addDoc(collection(db, "produits"), nouveauProduit);
+
+  document.getElementById("nomProduit").value = "";
+  document.getElementById("categorieProduit").value = "";
+  document.getElementById("stockProduit").value = "";
+  document.getElementById("prixAchatProduit").value = "";
+  document.getElementById("prixProduit").value = "";
+  document.getElementById("seuilProduit").value = "";
+  document.getElementById("photoProduit").value = "";
+
+  alert("Produit ajouté avec succès.");
 }
 
 function afficherBoutique() {
