@@ -311,49 +311,49 @@ function afficherStats() {
 }
 
 function diminuerVentes() {
-  let montant = Number(prompt("Montant à diminuer sur le total des ventes :"));
+  let montant = Number(prompt("Montant à diminuer sur total ventes :"));
 
-  if (!montant || montant <= 0) {
+  if (isNaN(montant) || montant <= 0) {
     alert("Montant invalide.");
     return;
   }
 
-  reductionVentes += montant;
+  reductionVentes = reductionVentes + montant;
   localStorage.setItem("reductionVentes", String(reductionVentes));
 
   afficherStats();
 }
 
 function diminuerBenefice() {
-  let montant = Number(prompt("Montant à diminuer sur le bénéfice total :"));
+  let montant = Number(prompt("Montant à diminuer sur bénéfice total :"));
 
-  if (!montant || montant <= 0) {
+  if (isNaN(montant) || montant <= 0) {
     alert("Montant invalide.");
     return;
   }
 
-  reductionBenefice += montant;
+  reductionBenefice = reductionBenefice + montant;
   localStorage.setItem("reductionBenefice", String(reductionBenefice));
 
   afficherStats();
 }
 
 function diminuerValeurStock() {
-  let montant = Number(prompt("Montant à diminuer sur la valeur du stock :"));
+  let montant = Number(prompt("Montant à diminuer sur valeur du stock :"));
 
-  if (!montant || montant <= 0) {
+  if (isNaN(montant) || montant <= 0) {
     alert("Montant invalide.");
     return;
   }
 
-  reductionStock += montant;
+  reductionStock = reductionStock + montant;
   localStorage.setItem("reductionStock", String(reductionStock));
 
   afficherStats();
 }
 
 function resetVentes() {
-  let confirmation = confirm("Remettre le total des ventes à zéro ?");
+  let confirmation = confirm("Remettre seulement les ventes à zéro ?");
 
   if (!confirmation) return;
 
@@ -364,7 +364,7 @@ function resetVentes() {
 }
 
 function resetBenefice() {
-  let confirmation = confirm("Remettre le bénéfice total à zéro ?");
+  let confirmation = confirm("Remettre seulement le bénéfice à zéro ?");
 
   if (!confirmation) return;
 
@@ -373,6 +373,7 @@ function resetBenefice() {
 
   afficherStats();
 }
+
 
 function afficherVentes() {
   let zone = document.getElementById("listeVentes");
