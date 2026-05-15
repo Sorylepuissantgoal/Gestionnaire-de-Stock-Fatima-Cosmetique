@@ -305,14 +305,23 @@ function retirerBenefice() {
 }
 
 function resetBenefice() {
-  let confirmation = confirm("Remettre le bénéfice total à zéro ?");
+  let confirmation = confirm("Remettre le bénéfice à zéro ?");
 
   if (!confirmation) return;
 
   beneficeRetire = calculerBeneficeTotal();
-  localStorage.setItem("beneficeRetire", beneficeRetire);
+
+  localStorage.setItem("beneficeRetire", String(beneficeRetire));
+
+  let beneficeElement = document.getElementById("beneficeTotal");
+
+  if (beneficeElement) {
+    beneficeElement.textContent = "0 GNF";
+  }
 
   afficherStats();
+
+  location.reload();
 }
 
 function retirerVentes() {
