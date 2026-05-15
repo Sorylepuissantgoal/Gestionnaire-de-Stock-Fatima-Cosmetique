@@ -179,15 +179,15 @@ async function vendreProduit(id) {
   }
 
   await updateDoc(doc(db, "produits", produit.firestoreId), {
-    stock: produit.stock - 1
+    stock: Number(produit.stock) - 1
   });
 
   let vente = {
     id: Date.now(),
     produit: produit.nom,
-    prix: Number(produit.prix),
+    prix: Number(produit.prix || 0),
     prixAchat: Number(produit.prixAchat || 0),
-    benefice: Number(produit.prix) - Number(produit.prixAchat || 0),
+    benefice: Number(produit.prix || 0) - Number(produit.prixAchat || 0),
     date: new Date().toLocaleString("fr-FR"),
     jour: new Date().toLocaleDateString("fr-FR")
   };
@@ -217,7 +217,7 @@ async function ajouterStock(id) {
   }
 
   await updateDoc(doc(db, "produits", produit.firestoreId), {
-    stock: produit.stock + quantite
+    stock: Number(produit.stock) + quantite
   });
 
   alert("Stock ajouté.");
@@ -242,6 +242,106 @@ async function supprimerProduit(id) {
 
 function sauvegarderVentes() {
   localStorage.setItem("ventes", JSON.stringify(ventes));
+}
+
+function calculerVentesTotal() {
+  return ventes.reduce((total, vente) => {
+    return total + Number(vente.prix || 0);
+  }, 0);
+}
+
+function calculerBeneficeTotal() {
+  return ventes.reduce((total, vente) => {
+    return total + Number(vente.benefice || 0);
+  }, 0);
+}
+
+function afficherStats() {
+  let totalProduits = produits.length;
+
+  let valeurStock = produits.reduce((total, produit) => {
+    return total + Number(produit.stock || 0) * Number(produit.prix || 0);
+  }, 0);
+
+  let ventesTotal = calculerVentesTotal() - ventesRetirees;
+  let beneficeTotal = calculerBeneficeTotal() - beneficeRetire;
+
+  if (ventesTotal < 0) ventesTotal = 0;
+  if (beneficeTotal < 0) beneficeTotal = 0;
+
+  if (document.getElementById("totalProduits")) {
+    document.getElementById("totalProduits").textContent = totalProduits;
+  }
+
+  if (document.getElementById("valeurStock")) {
+    document.getElementById("valeurStock").textContent = formatPrix(valeurStock);
+  }
+
+  if (document.getElementById("totalVentes")) {
+    document.getElementById("totalVentes").textContent = formatPrix(ventesTotal);
+  }
+
+  if (document.getElementById("beneficeTotal")) {
+    document.getElementById("beneficeTotal").textContent = formatPrix(beneficeTotal);
+  }
+}
+
+function retirerBenefice() {
+  let beneficeActuel = calculerBeneficeTotal() - beneficeRetire;
+
+  if (beneficeActuel <= 0) {
+    alert("Aucun bénéfice à retirer.");
+    return;
+  }
+
+  let confirmation = confirm("Retirer le bénéfice actuel ?");
+
+  if (!confirmation) return;
+
+  beneficeRetire += beneficeActuel;
+  localStorage.setItem("beneficeRetire", beneficeRetire);
+
+  afficherStats();
+}
+
+function resetBenefice() {
+  let confirmation = confirm("Remettre le bénéfice total à zéro ?");
+
+  if (!confirmation) return;
+
+  beneficeRetire = calculerBeneficeTotal();
+  localStorage.setItem("beneficeRetire", beneficeRetire);
+
+  afficherStats();
+}
+
+function retirerVentes() {
+  let ventesActuelles = calculerVentesTotal() - ventesRetirees;
+
+  if (ventesActuelles <= 0) {
+    alert("Aucune vente à retirer.");
+    return;
+  }
+
+  let confirmation = confirm("Retirer le total des ventes actuel ?");
+
+  if (!confirmation) return;
+
+  ventesRetirees += ventesActuelles;
+  localStorage.setItem("ventesRetirees", ventesRetirees);
+
+  afficherStats();
+}
+
+function resetVentes() {
+  let confirmation = confirm("Remettre le total des ventes à zéro ?");
+
+  if (!confirmation) return;
+
+  ventesRetirees = calculerVentesTotal();
+  localStorage.setItem("ventesRetirees", ventesRetirees);
+
+  afficherStats();
 }
 
 function afficherVentes() {
@@ -273,130 +373,48 @@ function afficherAlertes() {
 
   zone.innerHTML = "";
 
-  let alertes = produits.filter(p => Number(p.stock) <= Number(p.seuil));
-
-  if (alertes.length === 0) {
-    zone.innerHTML = "<p>Aucune alerte stock.</p>";
-    return;
-  }
-
-  alertes.forEach(produit => {
-    zone.innerHTML += `
-      <div class="alert-item">
-        <strong>${produit.nom}</strong><br>
-        Stock actuel : ${produit.stock}<br>
-        Seuil minimum : ${produit.seuil}<br>
-        Pensez à réapprovisionner.
-      </div>
-    `;
+  let produitsStockBas = produits.filter(produit => {
+    return Number(produit.stock || 0) <= Number(produit.seuil || 5);
   });
-}
 
-function afficherStats() {
-  if (!document.getElementById("totalProduits")) return;
-
-  let totalProduits = produits.length;
-  let valeurStock = produits.reduce((total, p) => total + Number(p.stock || 0) * Number(p.prix || 0), 0);
-
-  let totalVentesBrut = ventes.reduce((total, v) => total + Number(v.prix || 0), 0);
-  let totalVentes = totalVentesBrut - ventesRetirees;
-
-  let totalAlertes = produits.filter(p => Number(p.stock) <= Number(p.seuil)).length;
-
-  let beneficeTotalBrut = ventes.reduce((total, v) => total + Number(v.benefice || 0), 0);
-  let beneficeTotal = beneficeTotalBrut - beneficeRetire;
-
-  document.getElementById("totalProduits").textContent = totalProduits;
-  document.getElementById("valeurStock").textContent = formatPrix(valeurStock);
-  document.getElementById("totalVentes").textContent = formatPrix(totalVentes);
-  document.getElementById("totalAlertes").textContent = totalAlertes;
-  document.getElementById("beneficeTotal").textContent = formatPrix(beneficeTotal);
-}
-
-function ouvrirConnexionAdmin() {
-  if (adminConnecte) {
-    afficherPage("admin");
+  if (produitsStockBas.length === 0) {
+    zone.innerHTML = "<p>Aucune alerte stock.</p>";
   } else {
-    afficherPage("connexionAdmin");
+    produitsStockBas.forEach(produit => {
+      zone.innerHTML += `
+        <div class="alerte-item">
+          <strong>${produit.nom}</strong><br>
+          Stock restant : ${produit.stock}
+        </div>
+      `;
+    });
+  }
+
+  if (document.getElementById("stockBas")) {
+    document.getElementById("stockBas").textContent = produitsStockBas.length;
   }
 }
 
-function connecterAdmin() {
-  let user = document.getElementById("adminUser").value;
-  let password = document.getElementById("adminPassword").value;
-  let message = document.getElementById("messageLogin");
+function connexionAdmin() {
+  let username = prompt("Nom d'utilisateur admin :");
+  let password = prompt("Mot de passe admin :");
 
-  if (user === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+  if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
     adminConnecte = true;
-    message.textContent = "";
     afficherPage("admin");
   } else {
-    message.textContent = "Nom d'utilisateur ou mot de passe incorrect.";
+    alert("Identifiants incorrects.");
   }
 }
 
-function retirerBenefice() {
-  let montant = Number(prompt("Montant à retirer :"));
-
-  if (!montant || montant <= 0) {
-    alert("Montant invalide");
-    return;
-  }
-
-  beneficeRetire += montant;
-  localStorage.setItem("beneficeRetire", beneficeRetire);
-
-  afficherStats();
-}
-
-function resetBenefice() {
-  let confirmation = confirm("Remettre le bénéfice à zéro ?");
-
-  if (confirmation) {
-    beneficeRetire = 0;
-    localStorage.setItem("beneficeRetire", 0);
-    afficherStats();
-  }
-}
-
-function retirerVentes() {
-  let montant = Number(prompt("Montant à retirer des ventes :"));
-
-  if (!montant || montant <= 0) {
-    alert("Montant invalide");
-    return;
-  }
-
-  ventesRetirees += montant;
-  localStorage.setItem("ventesRetirees", ventesRetirees);
-
-  afficherStats();
-}
-
-function resetVentes() {
-  let confirmation = confirm("Remettre le total ventes à zéro ?");
-
-  if (confirmation) {
-    ventesRetirees = ventes.reduce((total, v) => total + Number(v.prix || 0), 0);
-    localStorage.setItem("ventesRetirees", ventesRetirees);
-    afficherStats();
-  }
-}
-
-window.afficherPage = afficherPage;
-window.ouvrirConnexionAdmin = ouvrirConnexionAdmin;
-window.connecterAdmin = connecterAdmin;
 window.ajouterProduit = ajouterProduit;
 window.vendreProduit = vendreProduit;
 window.ajouterStock = ajouterStock;
 window.supprimerProduit = supprimerProduit;
+window.afficherPage = afficherPage;
+window.connexionAdmin = connexionAdmin;
+
 window.retirerBenefice = retirerBenefice;
 window.resetBenefice = resetBenefice;
 window.retirerVentes = retirerVentes;
 window.resetVentes = resetVentes;
-
-afficherBoutique();
-afficherAdmin();
-afficherVentes();
-afficherAlertes();
-afficherStats();
