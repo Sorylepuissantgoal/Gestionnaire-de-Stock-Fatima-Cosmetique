@@ -8,120 +8,107 @@
 </head>
 <body>
 
-  <!-- NAVBAR -->
-  <header class="navbar">
-    <div class="logo">Fatima cosmetique </div>
+<header class="navbar">
+  <div class="logo">Fatima cosmetique</div>
+  <nav>
+    <button onclick="afficherPage('boutique')">Boutique</button>
+    <button onclick="ouvrirConnexionAdmin()">Admin</button>
+  </nav>
+</header>
 
-    <nav>
-      <button onclick="afficherPage('boutique')">Boutique</button>
-      <button onclick="ouvrirConnexionAdmin()">Admin</button>
-    </nav>
-  </header>
+<section id="boutique" class="page active">
+  <div class="hero">
+    <h1>Bienvenue dans la Gestion de Stock de Fatima Cosmetique et SPA</h1>
+    <p>Fatoumata Binta Diallo</p>
+  </div>
 
-  <!-- PAGE BOUTIQUE -->
-  <section id="boutique" class="page active">
-    <div class="hero">
-      <h1>Bienvenue dans la Gestion de Stock de Fatima Cosmetique et SPA</h1>
-      <p>Fatoumata Binta Diallo</p>
+  <h2 class="titre-section">Nos produits</h2>
+  <div id="listeBoutique" class="produits-grid"></div>
+</section>
+
+<section id="connexionAdmin" class="page">
+  <div class="login-box">
+    <h2>Connexion Admin</h2>
+
+    <input type="text" id="adminUser" placeholder="Nom d'utilisateur">
+    <input type="password" id="adminPassword" placeholder="Mot de passe">
+
+    <button class="btn-primary" onclick="connecterAdmin()">Se connecter</button>
+    <p id="messageLogin" class="message-erreur"></p>
+  </div>
+</section>
+
+<section id="admin" class="page">
+  <h1 class="titre-section">Tableau de bord Admin</h1>
+
+  <div class="stats">
+    <div class="stat-card">
+      <p>Total produits</p>
+      <h2 id="totalProduits">0</h2>
     </div>
 
-    <h2 class="titre-section">Nos produits</h2>
-    <div id="listeBoutique" class="produits-grid"></div>
-  </section>
-
-  <!-- PAGE CONNEXION ADMIN -->
-  <section id="connexionAdmin" class="page">
-    <div class="login-box">
-      <h2>Connexion Admin</h2>
-
-      <input type="text" id="adminUser" placeholder="Nom d'utilisateur">
-      <input type="password" id="adminPassword" placeholder="Mot de passe">
-
-      <button class="btn-primary" onclick="connecterAdmin()">Se connecter</button>
-
-      <p id="messageLogin" class="message-erreur"></p>
+    <div class="stat-card">
+      <p>Valeur du stock</p>
+      <h2 id="valeurStock">0 GNF</h2>
     </div>
-  </section>
 
-  <!-- PAGE ADMIN -->
-  <section id="admin" class="page">
+    <div class="stat-card">
+      <p>Total ventes</p>
+      <h2 id="totalVentes">0 GNF</h2>
+      <button onclick="retirerVentes()">Retirer</button>
+      <button onclick="resetVentes()">Reset</button>
+    </div>
 
-    <h1 class="titre-section">Tableau de bord Admin</h1>
-
-    <!-- STATS -->
-    <div class="stats">
-      <div class="stat-card">
-        <p>Total produits</p>
-        <h2 id="totalProduits">0</h2>
-      </div>
-
-      <div class="stat-card">
-        <p>Valeur du stock</p>
-        <h2 id="valeurStock">0 GNF</h2>
-      </div>
-
-      <div class="stat-card">
-        <p>Total ventes</p>
-        <h2 id="totalVentes">0 GNF</h2>
-        <button onclick="retirerVentes()">Retirer</button>
-        <button onclick="resetVentes()">Reset</button>
-      </div>
-
-      <div class="stat-card">
+    <div class="stat-card">
       <p>Bénéfice total</p>
       <h2 id="beneficeTotal">0 GNF</h2>
-
       <button onclick="retirerBenefice()">Retirer</button>
       <button onclick="resetBenefice()">Reset</button>
     </div>
 
-      <div class="stat-card alert">
-        <p>Stock bas</p>
-        <h2 id="totalAlertes">0</h2>
-      </div>
+    <div class="stat-card alert">
+      <p>Stock bas</p>
+      <h2 id="totalAlertes">0</h2>
+    </div>
+  </div>
+
+  <div class="admin-layout">
+
+    <div class="admin-box">
+      <h2>Ajouter un produit</h2>
+
+      <input type="text" id="nomProduit" placeholder="Nom du produit">
+      <input type="text" id="categorieProduit" placeholder="Catégorie">
+      <input type="number" id="stockProduit" placeholder="Quantité en stock">
+      <input type="number" id="prixAchatProduit" placeholder="Prix d'achat">
+      <input type="number" id="prixProduit" placeholder="Prix de vente">
+      <input type="number" id="seuilProduit" placeholder="Seuil d'alerte">
+
+      <label>Photo du produit</label>
+      <input type="text" id="photoProduit" placeholder="Lien de la photo">
+
+      <button class="btn-primary" onclick="ajouterProduit()">Ajouter produit</button>
     </div>
 
-    <div class="admin-layout">
-
-      <!-- AJOUT PRODUIT -->
-      <div class="admin-box">
-        <h2>Ajouter un produit</h2>
-
-        <input type="text" id="nomProduit" placeholder="Nom du produit">
-        <input type="text" id="categorieProduit" placeholder="Catégorie">
-        <input type="number" id="stockProduit" placeholder="Quantité en stock">
-        <input type="number" id="prixAchatProduit" placeholder="Prix d'achat">
-        <input type="number" id="prixProduit" placeholder="Prix de vente">
-        <input type="number" id="seuilProduit" placeholder="Seuil d'alerte">
-
-        <label>Photo du produit</label>
-        <input type="text" id="photoProduit" placeholder="Lien Google Drive de la photo">
-
-        <button class="btn-primary" onclick="ajouterProduit()">Ajouter produit</button>
-      </div>
-
-      <!-- LISTE PRODUITS ADMIN -->
-      <div class="admin-box">
-        <h2>Produits</h2>
-        <div id="listeAdmin"></div>
-      </div>
-
-      <!-- VENTES -->
-      <div class="admin-box">
-        <h2>Ventes</h2>
-        <div id="listeVentes"></div>
-      </div>
-
-      <!-- ALERTES -->
-      <div class="admin-box">
-        <h2>Alertes stock</h2>
-        <div id="listeAlertes"></div>
-      </div>
-
+    <div class="admin-box">
+      <h2>Produits</h2>
+      <div id="listeAdmin"></div>
     </div>
-  </section>
+
+    <div class="admin-box">
+      <h2>Ventes</h2>
+      <div id="listeVentes"></div>
+    </div>
+
+    <div class="admin-box">
+      <h2>Alertes stock</h2>
+      <div id="listeAlertes"></div>
+    </div>
+
+  </div>
+</section>
 
 <script type="module" src="script.js"></script>
 </body>
-</html>
+</html> 
  
