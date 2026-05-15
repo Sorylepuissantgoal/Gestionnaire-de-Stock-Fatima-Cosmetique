@@ -22,8 +22,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-console.log("Firebase connecté");
-
 let adminConnecte = false;
 
 const ADMIN_USERNAME = "Sarifou";
@@ -33,8 +31,6 @@ let produits = [];
 let ventes = JSON.parse(localStorage.getItem("ventes")) || [];
 let beneficeRetire = Number(localStorage.getItem("beneficeRetire")) || 0;
 let ventesRetirees = Number(localStorage.getItem("ventesRetirees")) || 0;
-
-console.log("Firebase connecté");
 
 onSnapshot(collection(db, "produits"), (snapshot) => {
   produits = [];
@@ -48,10 +44,10 @@ onSnapshot(collection(db, "produits"), (snapshot) => {
 
   afficherBoutique();
   afficherAdmin();
+  afficherVentes();
   afficherAlertes();
   afficherStats();
 });
-
 
 function afficherPage(pageId) {
   document.querySelectorAll(".page").forEach(page => {
@@ -68,10 +64,10 @@ function afficherPage(pageId) {
 }
 
 function formatPrix(prix) {
-  return Number(prix).toLocaleString("fr-FR") + " GNF";
+  return Number(prix || 0).toLocaleString("fr-FR") + " GNF";
 }
 
-function ajouterProduit() {
+async function ajouterProduit() {
   let nom = document.getElementById("nomProduit").value.trim();
   let categorie = document.getElementById("categorieProduit").value.trim();
   let stock = Number(document.getElementById("stockProduit").value);
@@ -90,13 +86,13 @@ function ajouterProduit() {
     nom: nom,
     categorie: categorie || "Autre",
     stock: stock,
-    prixAchat: prixAchat,
+    prixAchat: prixAchat || 0,
     prix: prix,
     seuil: seuil || 5,
-    photo: photo
+    photo: photo || ""
   };
 
-  addDoc(collection(db, "produits"), nouveauProduit);
+  await addDoc(collection(db, "produits"), nouveauProduit);
 
   document.getElementById("nomProduit").value = "";
   document.getElementById("categorieProduit").value = "";
@@ -111,6 +107,8 @@ function ajouterProduit() {
 
 function afficherBoutique() {
   let zone = document.getElementById("listeBoutique");
+  if (!zone) return;
+
   zone.innerHTML = "";
 
   if (produits.length === 0) {
@@ -124,15 +122,10 @@ function afficherBoutique() {
     zone.innerHTML += `
       <div class="carte-produit">
         <img src="${produit.photo || 'https://via.placeholder.com/300x200?text=Produit'}" alt="${produit.nom}">
-
         <h3>${produit.nom}</h3>
-
         <p>${produit.categorie}</p>
-
         <p><strong>${formatPrix(produit.prix)}</strong></p>
-
         <p>Stock : ${stockTexte}</p>
-
         <button class="btn-acheter" onclick="vendreProduit(${produit.id})">
           Acheter
         </button>
@@ -143,6 +136,8 @@ function afficherBoutique() {
 
 function afficherAdmin() {
   let zone = document.getElementById("listeAdmin");
+  if (!zone) return;
+
   zone.innerHTML = "";
 
   if (produits.length === 0) {
@@ -153,7 +148,6 @@ function afficherAdmin() {
   produits.forEach(produit => {
     zone.innerHTML += `
       <div class="produit-admin">
-
         <div class="produit-info">
           <strong>${produit.nom}</strong><br>
           Catégorie : ${produit.categorie}<br>
@@ -166,13 +160,12 @@ function afficherAdmin() {
         </div>
 
         <img src="${produit.photo || 'https://via.placeholder.com/100'}" alt="${produit.nom}">
-
       </div>
     `;
   });
 }
 
-function vendreProduit(id) {
+async function vendreProduit(id) {
   let produit = produits.find(p => p.id === id);
 
   if (!produit) {
@@ -185,67 +178,76 @@ function vendreProduit(id) {
     return;
   }
 
-  produit.stock--;
+  await updateDoc(doc(db, "produits", produit.firestoreId), {
+    stock: produit.stock - 1
+  });
 
   let vente = {
-  id: Date.now(),
-  produit: produit.nom,
-  prix: produit.prix,
-  prixAchat: produit.prixAchat || 0,
-  benefice: produit.prix - (produit.prixAchat || 0),
-  date: new Date().toLocaleString("fr-FR"),
-  jour: new Date().toLocaleDateString("fr-FR")
-};
+    id: Date.now(),
+    produit: produit.nom,
+    prix: Number(produit.prix),
+    prixAchat: Number(produit.prixAchat || 0),
+    benefice: Number(produit.prix) - Number(produit.prixAchat || 0),
+    date: new Date().toLocaleString("fr-FR"),
+    jour: new Date().toLocaleDateString("fr-FR")
+  };
 
   ventes.unshift(vente);
-  sauvegarder();
+  sauvegarderVentes();
 
-  afficherBoutique();
-  afficherAdmin();
   afficherVentes();
-  afficherAlertes();
   afficherStats();
 
   alert("Vente enregistrée.");
 }
 
-function ajouterStock(id) {
+async function ajouterStock(id) {
   let produit = produits.find(p => p.id === id);
 
-  if (!produit) return;
+  if (!produit) {
+    alert("Produit introuvable.");
+    return;
+  }
 
   let quantite = Number(prompt("Quantité à ajouter :", "1"));
 
-  if (quantite <= 0) {
+  if (!quantite || quantite <= 0) {
     alert("Quantité incorrecte.");
     return;
   }
 
-  produit.stock += quantite;
-  sauvegarder();
+  await updateDoc(doc(db, "produits", produit.firestoreId), {
+    stock: produit.stock + quantite
+  });
 
-  afficherBoutique();
-  afficherAdmin();
-  afficherAlertes();
-  afficherStats();
+  alert("Stock ajouté.");
 }
 
-function supprimerProduit(id) {
+async function supprimerProduit(id) {
+  let produit = produits.find(p => p.id === id);
+
+  if (!produit) {
+    alert("Produit introuvable.");
+    return;
+  }
+
   let confirmation = confirm("Voulez-vous supprimer ce produit ?");
 
   if (!confirmation) return;
 
-  produits = produits.filter(p => p.id !== id);
-  sauvegarder();
+  await deleteDoc(doc(db, "produits", produit.firestoreId));
 
-  afficherBoutique();
-  afficherAdmin();
-  afficherAlertes();
-  afficherStats();
+  alert("Produit supprimé.");
+}
+
+function sauvegarderVentes() {
+  localStorage.setItem("ventes", JSON.stringify(ventes));
 }
 
 function afficherVentes() {
   let zone = document.getElementById("listeVentes");
+  if (!zone) return;
+
   zone.innerHTML = "";
 
   if (ventes.length === 0) {
@@ -258,6 +260,7 @@ function afficherVentes() {
       <div class="vente-item">
         <strong>${vente.produit}</strong><br>
         Prix : ${formatPrix(vente.prix)}<br>
+        Bénéfice : ${formatPrix(vente.benefice)}<br>
         Date : ${vente.date}
       </div>
     `;
@@ -266,9 +269,11 @@ function afficherVentes() {
 
 function afficherAlertes() {
   let zone = document.getElementById("listeAlertes");
+  if (!zone) return;
+
   zone.innerHTML = "";
 
-  let alertes = produits.filter(p => p.stock <= p.seuil);
+  let alertes = produits.filter(p => Number(p.stock) <= Number(p.seuil));
 
   if (alertes.length === 0) {
     zone.innerHTML = "<p>Aucune alerte stock.</p>";
@@ -288,12 +293,17 @@ function afficherAlertes() {
 }
 
 function afficherStats() {
+  if (!document.getElementById("totalProduits")) return;
+
   let totalProduits = produits.length;
-  let valeurStock = produits.reduce((total, p) => total + p.stock * p.prix, 0);
-  let totalVentesBrut = ventes.reduce((total, v) => total + v.prix, 0);
+  let valeurStock = produits.reduce((total, p) => total + Number(p.stock || 0) * Number(p.prix || 0), 0);
+
+  let totalVentesBrut = ventes.reduce((total, v) => total + Number(v.prix || 0), 0);
   let totalVentes = totalVentesBrut - ventesRetirees;
-  let totalAlertes = produits.filter(p => p.stock <= p.seuil).length;
-  let beneficeTotalBrut = ventes.reduce((total, v) => total + (v.benefice || 0), 0);
+
+  let totalAlertes = produits.filter(p => Number(p.stock) <= Number(p.seuil)).length;
+
+  let beneficeTotalBrut = ventes.reduce((total, v) => total + Number(v.benefice || 0), 0);
   let beneficeTotal = beneficeTotalBrut - beneficeRetire;
 
   document.getElementById("totalProduits").textContent = totalProduits;
@@ -325,36 +335,28 @@ function connecterAdmin() {
   }
 }
 
-afficherBoutique();
-afficherAdmin();
-afficherVentes();
-afficherAlertes();
-afficherStats();
-
 function retirerBenefice() {
-    let montant = Number(prompt("Montant à retirer :"));
+  let montant = Number(prompt("Montant à retirer :"));
 
-    if (!montant || montant <= 0) {
-        alert("Montant invalide");
-        return;
-    }
+  if (!montant || montant <= 0) {
+    alert("Montant invalide");
+    return;
+  }
 
-    beneficeRetire += montant;
-    localStorage.setItem("beneficeRetire", beneficeRetire);
+  beneficeRetire += montant;
+  localStorage.setItem("beneficeRetire", beneficeRetire);
 
-    afficherStats();
+  afficherStats();
 }
 
-
 function resetBenefice() {
-    let confirmReset = confirm("Remettre le bénéfice à zéro ?");
+  let confirmation = confirm("Remettre le bénéfice à zéro ?");
 
-    if (confirmReset) {
-        beneficeRetire = 0;
-        localStorage.setItem("beneficeRetire", 0);
-
-        afficherStats();
-    }
+  if (confirmation) {
+    beneficeRetire = 0;
+    localStorage.setItem("beneficeRetire", 0);
+    afficherStats();
+  }
 }
 
 function retirerVentes() {
@@ -375,9 +377,8 @@ function resetVentes() {
   let confirmation = confirm("Remettre le total ventes à zéro ?");
 
   if (confirmation) {
-    ventesRetirees = ventes.reduce((total, v) => total + v.prix, 0);
+    ventesRetirees = ventes.reduce((total, v) => total + Number(v.prix || 0), 0);
     localStorage.setItem("ventesRetirees", ventesRetirees);
-
     afficherStats();
   }
 }
@@ -393,3 +394,9 @@ window.retirerBenefice = retirerBenefice;
 window.resetBenefice = resetBenefice;
 window.retirerVentes = retirerVentes;
 window.resetVentes = resetVentes;
+
+afficherBoutique();
+afficherAdmin();
+afficherVentes();
+afficherAlertes();
+afficherStats();
