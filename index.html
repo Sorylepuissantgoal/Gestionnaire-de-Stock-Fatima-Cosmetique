@@ -1,102 +1,32 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fatima Cosmétique - Gestion Stock</title>
-  <link rel="stylesheet" href="style.css?v=200">
+  <meta name="description" content="Gestionnaire de stock Fatima Cosmetique">
+  <title>Gestionnaire de Stock - Fatima Cosmetique</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-  <header>
-    <h1>Fatima Cosmétique</h1>
-
-    <nav>
-      <button onclick="afficherPage('boutique')">Boutique</button>
-      <button onclick="connexionAdmin()">Admin</button>
+  <header class="topbar">
+    <a class="brand" href="#dashboard" aria-label="Fatima Cosmetique">
+      <span class="brand-mark">FC</span>
+      <span><strong>Fatima Cosmetique</strong><small>Gestionnaire de stock</small></span>
+    </a>
+    <nav class="nav-tabs" aria-label="Navigation principale">
+      <a href="#dashboard">Tableau</a><a href="#products">Produits</a><a href="#sales">Ventes</a><a href="#alerts">Alertes</a>
     </nav>
   </header>
 
-  <main>
-
-    <section id="boutique" class="page active">
-      <h2>Boutique</h2>
-      <div id="listeBoutique" class="grid"></div>
-    </section>
-
-    <section id="admin" class="page">
-      <h2>Tableau de bord Admin</h2>
-
-      <div class="stats">
-
-        <div class="stat">
-          <p>Total produits</p>
-          <h3 id="totalProduits">0</h3>
-        </div>
-
-        <div class="stat">
-          <p>Valeur du stock</p>
-          <h3 id="valeurStock">0 GNF</h3>
-          <button onclick="diminuerValeurStock()">Diminuer</button>
-        </div>
-
-        <div class="stat">
-          <p>Total ventes</p>
-          <h3 id="totalVentes">0 GNF</h3>
-          <button onclick="diminuerVentes()">Diminuer</button>
-          <button onclick="resetVentes()">Reset</button>
-        </div>
-
-        <div class="stat">
-          <p>Bénéfice total</p>
-          <h3 id="beneficeTotal">0 GNF</h3>
-          <button onclick="diminuerBenefice()">Diminuer</button>
-          <button onclick="resetBenefice()">Reset</button>
-        </div>
-
-        <div class="stat danger">
-          <p>Stock bas</p>
-          <h3 id="stockBas">0</h3>
-        </div>
-
+  <main class="page">
+    <section class="hero-panel" id="dashboard">
+      <div>
+        <p class="eyebrow">Version 2.0</p>
+        <h1>Tableau de bord du stock</h1>
+        <p class="hero-copy">Suivi des produits, ventes, benefices et alertes de stock en temps reel.</p>
       </div>
-
-      <div class="admin-layout">
-
-        <div class="card">
-          <h3>Ajouter un produit</h3>
-
-          <input id="nomProduit" placeholder="Nom du produit">
-          <input id="categorieProduit" placeholder="Catégorie">
-          <input id="stockProduit" type="number" placeholder="Quantité en stock">
-          <input id="prixAchatProduit" type="number" placeholder="Prix d'achat">
-          <input id="prixProduit" type="number" placeholder="Prix de vente">
-          <input id="seuilProduit" type="number" placeholder="Seuil d'alerte">
-          <input id="photoProduit" placeholder="Lien image du produit">
-
-          <button class="primary" onclick="ajouterProduit()">Ajouter produit</button>
-        </div>
-
-        <div class="card">
-          <h3>Produits</h3>
-          <div id="listeAdmin"></div>
-        </div>
-
-        <div class="card">
-          <h3>Ventes</h3>
-          <div id="listeVentes"></div>
-        </div>
-
-        <div class="card">
-          <h3>Alertes stock</h3>
-          <div id="listeAlertes"></div>
-        </div>
-
+      <div class="hero-actions">
+        <a class="button primary" href="#product-form">Ajouter un produit</a>
+        <a class="button secondary" href="#sales">Enregistrer une vente</a>
       </div>
     </section>
-
-  </main>
-
-  <script type="module" src="script.js?v=300"></script>
-</body>
-</html>
